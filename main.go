@@ -5,8 +5,8 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
+	"github.com/EOS-Nation/firehose-block-converter/pbantelope"
 	"github.com/streamingfast/dstore"
-	"github.com/streamingfast/playground-firehose-eosio-go/pbantelope"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 	"io"
@@ -102,7 +102,7 @@ stream:
 			ForkSteps:     []pbbstream.ForkStep{pbbstream.ForkStep_STEP_IRREVERSIBLE},
 			Details:       pbbstream.BlockDetails_BLOCK_DETAILS_FULL,
 		},
-			//grpc.PerRPCCredentials(credentials)
+		//grpc.PerRPCCredentials(credentials)
 		)
 		noError(err, "unable to start blocks stream")
 
@@ -128,7 +128,7 @@ stream:
 			// update the block version to v3
 			block.Version = 3
 
-			// create a new bstream.Block
+			// create a bstream.Block
 			bstreamBlock := &bstream.Block{
 				Id:             block.Id,
 				Number:         uint64(block.Number),
@@ -153,11 +153,8 @@ stream:
 				nextStatus = now.Add(statusFrequency)
 			}
 
-			mergedBlocksWriter.ProcessBlock(response.Block)
-
-			if writer != nil {
-				writeBlock(writer, block)
-			}
+			err = mergeWriter.ProcessBlock(bstreamBlock, nil)
+			noError(err, "failed to process block by the merged blocks writer")
 
 			stats.recordBlock(int64(response.XXX_Size()))
 		}

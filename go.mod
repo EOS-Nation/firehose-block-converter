@@ -1,4 +1,4 @@
-module github.com/streamingfast/playground-firehose-eosio-go
+module github.com/EOS-Nation/firehose-block-converter
 
 go 1.18
 
